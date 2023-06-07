@@ -1,78 +1,102 @@
 package kopo.poly;
 
-import kopo.poly.dto.NlpDTO;
-import kopo.poly.dto.OcrDTO;
+import kopo.poly.dto.StudentDTO;
 import kopo.poly.service.INlpService;
 import kopo.poly.service.IOcrService;
+import kopo.poly.service.IStudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @SpringBootApplication
 public class AiJavaPrjApplication implements CommandLineRunner {
-    //@Service 정의된 자바 파일
-    //Spring Frameworks 실행될 때, @Service 정의한 자바는 자동으로 메모리에 올림
-    //메모라에 올라간 OcrService 객체를 ocrService 변수에 객체를 넣어주기
-    private final IOcrService ocrService; //이미지 인식
-    private final INlpService nlpService; //자연어 처리
+
+    private final IOcrService ocrService;
+    private final INlpService nlpService;
+    private final IStudentService studentService;
 
     public static void main(String[] args) {
+
         SpringApplication.run(AiJavaPrjApplication.class, args);
     }
-    
+
     @Override
     public void run(String... args) throws Exception {
 
-        log.info("자바 프로그램 시작!!");
+        log.info("자바 프로그래밍 시작!!");
 
-        String filePath = "image"; // 문자열을 인식할 이미지 파일 경로
-        String fileName = "image01.png"; //문자열을 인식할 이미지 파일 이름
+//        String filePath = "image";
+//        String fileName = "sample01.jpg";
+//
+//        OcrDTO pDTO = new OcrDTO();
+//
+//        pDTO.setFilePath(filePath);
+//        pDTO.setFileName(fileName);
+//
+//        OcrDTO rDTO = ocrService.getReadforImageText(pDTO);
+//
+//        String result = rDTO.getResult();
+//
+//        log.info("인식된 문자열");
+//        log.info(result);
+//
+//        log.info("자바 프로그래밍 종료!!");
+//
+//        log.info("----------------------------------------------------------");
+//        NlpDTO nlpDTO = nlpService.getPlainText(result);
+//        log.info("형태소별 품사 분석 결과 : " + nlpDTO.getResult());
+//
+//        //명사 추출 결과
+//        nlpDTO = nlpService.getNouns(result);
+//
+//        List<String> nonus = nlpDTO.getNouns();
+//
+//        Set<String> distinct = new HashSet<>(nonus);
+//
+//        log.info("중복 제거 수행 전 단어 수 : " + nonus.size());
+//        log.info("중복 제거 수행 후 단어 수 : " + distinct.size());
+//
+//        Map<String, Integer> rMap = new HashMap<>();
+//
+//        for (String s : distinct) {
+//            int count = Collections.frequency(nonus, s);
+//            rMap.put(s, count);
+//
+//            log.info(s + " : " + count);
+//        }
+//
+//        List<Map.Entry<String, Integer>> sortResult = new LinkedList<>(rMap.entrySet());
+//
+//        Collections.sort(sortResult, (o1,o2) -> o2.getValue().compareTo(o1.getValue()));
+//
+//        log.info("가장 많이 사용된 단어는? : " + sortResult);
+//
+        StudentDTO pDTO; // 학생 등록, 수정, 삭제에 활용될 DTO
+        List<StudentDTO> rList; // DB 조회 결과를 표현
 
-        //전달할 값(Parameter) 약자로 보통 변수명 앞에 p을 붙임 => pDTO
-        OcrDTO pDTO = new OcrDTO(); //OcrService의 함수에 정보를 전달할 DTO를 메모리에 올리기
+        //학생 등록하기
+        pDTO = new StudentDTO();
 
-        pDTO.setFilePath(filePath);
-        pDTO.setFileName(fileName);
+        pDTO.setUserId("hglee67");
+        pDTO.setUserName("이협건");
+        pDTO.setEmail("hglee67@kopo.ac.kr");
+        pDTO.setAddr("서울");
 
-        //실행결과(result) 약자로 보통 변수며 앞에 r을 붙임 => rDTO
-        OcrDTO rDTO = ocrService.getReadforImageText(pDTO);
+        rList = studentService.insertStudent(pDTO);
 
-        String result = rDTO.getResult(); // 인식된 문자열
-
-        log.info("인식된 문자열");
-        log.info(result);
-        log.info("--------------------------------------------------");
-        NlpDTO nlpDTO = nlpService.getPlainText(result);
-        log.info("형태소별 품사 분석 결과 : " + nlpDTO.getResult());
-
-        nlpDTO = nlpService.getNouns(result);
-        List<String> nouns = nlpDTO.getNouns();
-
-        Set<String> distinct = new HashSet<>(nouns);
-        log.info("중복 제거 수행 전 단어 수 : " + nouns.size());
-        log.info("중복 제거 수행 후 단어 수 : " + distinct.size());
-
-        Map<String, Integer> rMap = new HashMap<>();
-
-        for (String s : distinct) {
-            int count = Collections.frequency(nouns, s);
-            rMap.put(s, count);
-
-            log.info(s + " : " + count);
-        }
-        List<Map.Entry<String, Integer>> sortResult = new LinkedList<>(rMap.entrySet());
-
-        Collections.sort(sortResult, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-
-        log.info("가장 많이 사용된 단어는? :" + sortResult);
+        rList.forEach(dto -> {
+            log.info("DB에 저장된 아이디 : " + dto.getUserId());
+            log.info("DB에 저장된 이름 : " + dto.getUserName());
+            log.info("DB에 저장된 이메일 : " + dto.getEmail());
+            log.info("DB에 저장된 주소 : " + dto.getAddr());
+        });
 
         log.info("자바 프로그래밍 종료!!");
-
     }
 }
