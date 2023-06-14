@@ -17,6 +17,15 @@ public interface IStudentMapper {
     @param pDTO 등록할 학생정보
     */
     void insertStudent(StudentDTO pDTO) throws Exception;
+    /**
+     * 학생 수정 쿼리 / 회원 수정은 PK로 설정된 USER_ID의 값 수정은 불가능하면, USER_ID 값 기준으로 수정함
+     */
+    void updateStudent(StudentDTO pDTO) throws Exception;
+
+    /**
+     * 학생 삭제 쿼리 / 학생 삭제는 PK로 설정된 USER_ID의 값을 기준으로 삭제함
+     */
+    void deleteStudent(StudentDTO pDTO) throws Exception;
 
     /**
      * 학생 전체 조회 쿼리
@@ -30,11 +39,9 @@ public interface IStudentMapper {
     List<StudentDTO> getStudentList() throws Exception;
 
     /**
-    학생이 존재하는지 체크하기 위해 학생 아이디를 기준으로 1명 조회하기 쿼리
+     학생이 존재하는지 체크하기 위해 학생 아이디를 기준으로 1명 조회하기 쿼리
      */
     StudentDTO getStudent(StudentDTO pDTO) throws Exception;
-
-
 
 
 }
